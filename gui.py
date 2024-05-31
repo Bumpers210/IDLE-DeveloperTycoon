@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+
 class GameGUI:
     def __init__(self, game):
         self.game = game

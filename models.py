@@ -1,6 +1,7 @@
 import random
 import json
 
+
 class Developer:
     def __init__(
         self,
