@@ -8,7 +8,6 @@ class GameGUI:
         self.root = tk.Tk()
         self.root.title("Developer Tycoon")
         self.create_gui()
-        self.update_events()  # Start the event update loop
 
     def create_gui(self):
         # Main frame to hold left and right sections
@@ -136,21 +135,29 @@ class GameGUI:
         )
         self.button_resume_project.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
+        #        self.button_hire_developer = tk.Button(
+        #            self.control_frame,
+        #            text="Hire Developer",
+        #            command=self.game.hire_developer,
+        #            font=("Arial", 10),
+        #        )
+        #        self.button_hire_developer.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+
         self.button_train = tk.Button(
             self.control_frame,
             text="Train Developer",
             command=self.game.train_developer,
             font=("Arial", 10),
         )
-        self.button_train.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+        self.button_train.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
 
         self.button_start_research = tk.Button(
             self.control_frame,
             text="Start Research",
-            command=self.open_research_selection,
+            command=self.game.open_research_selection,
             font=("Arial", 10),
         )
-        self.button_start_research.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
+        self.button_start_research.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
 
         self.button_save = tk.Button(
             self.control_frame,
@@ -234,42 +241,5 @@ class GameGUI:
             project_requirements = "No project selected."
         self.label_project_requirements.config(text=project_requirements)
 
-    def open_research_selection(self):
-        research_window = tk.Toplevel(self.root)
-        research_window.title("Select Research")
-
-        label = tk.Label(research_window, text="Select a research to start:")
-        label.pack(padx=10, pady=10)
-
-        listbox = tk.Listbox(research_window)
-        listbox.pack(padx=10, pady=10)
-
-        for res in self.game.researches:
-            listbox.insert(tk.END, res.name)
-
-        def start_research():
-            selected_research_index = listbox.curselection()
-            if selected_research_index:
-                selected_research = self.game.researches[selected_research_index[0]]
-                self.game.start_research(selected_research)
-                research_window.destroy()
-
-        button = tk.Button(
-            research_window, text="Start Research", command=start_research
-        )
-        button.pack(padx=10, pady=10)
-
     def enable_resume_button(self):
         self.button_resume_project.config(state=tk.NORMAL)
-
-    def update_events(self):
-        events = self.game.event_manager.get_events()
-        self.event_history_text.config(state=tk.NORMAL)
-        # Lösche den gesamten Text nur einmal
-        self.event_history_text.delete("1.0", tk.END)
-        for event in events:
-            # Füge jedes Ereignis am Anfang ein
-            self.event_history_text.insert("1.0", event + "\n")
-        self.event_history_text.config(state=tk.DISABLED)
-        self.root.after(1000, self.update_events)
-
