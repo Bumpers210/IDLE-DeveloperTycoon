@@ -65,10 +65,7 @@ class Game:
         self.start_income_timer()
         self.gui.update_gui()  # Ensure the GUI is updated with the correct initial values
 
-        self.random_events_thread = threading.Thread(
-            target=self.event_manager.start_random_events, daemon=True
-        )
-        self.random_events_thread.start()
+        self.event_manager.start_random_events()  # Start random events in a separate thread
 
         print("Game Initialized.")
 
@@ -76,7 +73,13 @@ class Game:
         print("Loading projects from database...")
         project_data = self.storage.get_projects()
         projects = [
-            Project(name=proj[0], duration=proj[1], programming=proj[2], design=proj[3], marketing=proj[4])
+            Project(
+                name=proj[0],
+                duration=proj[1],
+                programming=proj[2],
+                design=proj[3],
+                marketing=proj[4],
+            )
             for proj in project_data
         ]
         print(f"Loaded projects: {projects}")
@@ -112,6 +115,9 @@ class Game:
 
     def specialize_developer(self):
         self.developer_manager.specialize_developer()
+
+    def open_research_selection(self):
+        self.research_manager.open_research_selection()
 
     def start_research(self, research):
         self.research_manager.start_research(research)
@@ -150,7 +156,10 @@ class Game:
     def update_income_per_minute(self):
         total_salary = sum(dev.salary for dev in self.developers)
         project_income = (
-            sum(project.programming for project in self.completed_projects_list) + sum(project.design for project in self.completed_projects_list) + sum(project.marketing for project in self.completed_projects_list) / 3 #Balanced Income/Minute
+            sum(project.programming for project in self.completed_projects_list)
+            + sum(project.design for project in self.completed_projects_list)
+            + sum(project.marketing for project in self.completed_projects_list)
+            / 3  # Balanced Income/Minute
         )
         self.income_per_minute = project_income - (total_salary / 60)
         print(f"Updated income per minute: ${self.income_per_minute:.2f}")
@@ -172,6 +181,9 @@ class Game:
             print("No project selected.")
 
     def run(self):
+        self.gui.root.after(
+            1000, self.event_manager.update_events
+        )  # Start the event update loop after 1 second
         self.gui.root.mainloop()
 
 
