@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 class ProjectSelector:
     def __init__(self, game):
         self.game = game
@@ -11,18 +12,28 @@ class ProjectSelector:
             project_window = tk.Toplevel(self.game.gui.root)
             project_window.title("Select Project")
 
+            # Create a frame for the Treeview and the scrollbar
+            frame = ttk.Frame(project_window)
+            frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
             columns = ("name", "duration", "programming", "design", "marketing")
-            tree = ttk.Treeview(project_window, columns=columns, show="headings")
+            tree = ttk.Treeview(frame, columns=columns, show="headings")
             tree.heading("name", text="Name", command=lambda: self.sort_projects(tree, "name"))
             tree.heading("duration", text="Duration", command=lambda: self.sort_projects(tree, "duration", numeric=True))
-            tree.heading("programming", text="programming", command=lambda: self.sort_projects(tree, "programming", numeric=True))
-            tree.heading("design", text="design", command=lambda: self.sort_projects(tree, "design", numeric=True))
-            tree.heading("marketing", text="marketing", command=lambda: self.sort_projects(tree, "marketing", numeric=True))
+            tree.heading("programming", text="Programming", command=lambda: self.sort_projects(tree, "programming", numeric=True))
+            tree.heading("design", text="Design", command=lambda: self.sort_projects(tree, "design", numeric=True))
+            tree.heading("marketing", text="Marketing", command=lambda: self.sort_projects(tree, "marketing", numeric=True))
 
             for project in self.game.projects:
                 tree.insert("", "end", values=(project.name, project.duration, project.programming, project.design, project.marketing))
 
-            tree.pack(padx=10, pady=10)
+            # Create a vertical scrollbar and attach it to the treeview
+            scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=tree.yview)
+            tree.configure(yscroll=scrollbar.set)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+            # Pack the treeview into the frame
+            tree.pack(fill=tk.BOTH, expand=True)
 
             def on_project_select(event):
                 selected_item = tree.selection()[0]

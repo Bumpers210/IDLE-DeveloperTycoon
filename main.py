@@ -150,7 +150,7 @@ class Game:
     def update_income_per_minute(self):
         total_salary = sum(dev.salary for dev in self.developers)
         project_income = (
-            sum(project.programming for project in self.completed_projects_list) + sum(project.design for project in self.completed_projects_list) + sum(project.marketing for project in self.completed_projects_list)
+            sum(project.programming for project in self.completed_projects_list) + sum(project.design for project in self.completed_projects_list) + sum(project.marketing for project in self.completed_projects_list) / 3 #Balanced Income/Minute
         )
         self.income_per_minute = project_income - (total_salary / 60)
         print(f"Updated income per minute: ${self.income_per_minute:.2f}")

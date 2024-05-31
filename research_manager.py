@@ -1,5 +1,6 @@
 import threading
 
+
 class ResearchManager:
     def __init__(self, game):
         self.game = game
