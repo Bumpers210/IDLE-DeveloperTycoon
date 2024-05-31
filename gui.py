@@ -135,13 +135,13 @@ class GameGUI:
         )
         self.button_resume_project.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
-        #        self.button_hire_developer = tk.Button(
-        #            self.control_frame,
-        #            text="Hire Developer",
-        #            command=self.game.hire_developer,
-        #            font=("Arial", 10),
-        #        )
-        #        self.button_hire_developer.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
+        self.button_hire_developer = tk.Button(
+            self.control_frame,
+            text="Hire Developer",
+            command=self.game.open_hire_developer_selection,
+            font=("Arial", 10),
+        )
+        self.button_hire_developer.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
 
         self.button_train = tk.Button(
             self.control_frame,

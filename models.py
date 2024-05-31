@@ -61,7 +61,7 @@ class Developer:
         print(f"{self.name}'s {min_skill} skill increased to {getattr(self, min_skill)}")
 
     @classmethod
-    def create_new_developer(cls, developers):
+    def create_new_developer_start(cls, developers):
         name = f"Developer{len(developers) + 1}"
         skill = 0
         hunger = random.randint(65, 100)
@@ -84,12 +84,89 @@ class Developer:
             salary,
         )
         developers.append(new_dev)
+        return new_dev
+
+    @classmethod
+    def create_new_developer_beginner(cls, developers):
+        name = f"Developer{len(developers) + 1}"
+        skill = random.randint(1, 32)
+        hunger = random.randint(65, 100)
+        thirst = random.randint(65, 100)
+        leisure = random.randint(0, 33)
+        programming = random.randint(1, 20)
+        design = random.randint(1, 20)
+        marketing = random.randint(1, 20)
+        salary = random.randint(500, 2500)
+        new_dev = cls(
+            name,
+            skill,
+            hunger,
+            thirst,
+            leisure,
+            0,
+            programming,
+            design,
+            marketing,
+            salary,
+        )
+        return new_dev
+
+    @classmethod
+    def create_new_developer_advanced(cls, developers):
+        name = f"Developer{len(developers) + 1}"
+        skill = random.randint(33, 65)
+        hunger = random.randint(65, 100)
+        thirst = random.randint(65, 100)
+        leisure = random.randint(0, 33)
+        programming = random.randint(21, 40)
+        design = random.randint(21, 40)
+        marketing = random.randint(21, 40)
+        salary = random.randint(2500, 5000)
+        new_dev = cls(
+            name,
+            skill,
+            hunger,
+            thirst,
+            leisure,
+            0,
+            programming,
+            design,
+            marketing,
+            salary,
+        )
+        return new_dev
+
+    @classmethod
+    def create_new_developer_professional(cls, developers):
+        name = f"Developer{len(developers) + 1}"
+        skill = random.randint(66, 100)
+        hunger = random.randint(65, 100)
+        thirst = random.randint(65, 100)
+        leisure = random.randint(0, 33)
+        programming = random.randint(41, 60)
+        design = random.randint(41, 60)
+        marketing = random.randint(41, 60)
+        salary = random.randint(5000, 7500)
+        new_dev = cls(
+            name,
+            skill,
+            hunger,
+            thirst,
+            leisure,
+            0,
+            programming,
+            design,
+            marketing,
+            salary,
+        )
+        return new_dev
 
     @staticmethod
     def load_developers_from_db(storage):
         developers_data = storage.get_developers()
         developers = [Developer(*data) for data in developers_data]
         return developers
+
 
 
 class Project:

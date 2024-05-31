@@ -50,7 +50,7 @@ class Game:
         self.storage.load_game(self)
 
         if not self.developers:
-            self.developer_manager.create_new_developer()
+            self.developer_manager.create_new_developer_start()
 
         self.update_income_per_minute()  # Update income per minute after loading game data
 
@@ -115,6 +115,9 @@ class Game:
 
     def specialize_developer(self):
         self.developer_manager.specialize_developer()
+        
+    def open_hire_developer_selection(self):
+        self.developer_manager.open_hire_developer_selection()
 
     def open_research_selection(self):
         self.research_manager.open_research_selection()
