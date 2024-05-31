@@ -2,7 +2,6 @@ import random
 from tkinter import messagebox
 from models import Developer
 
-
 class DeveloperManager:
     def __init__(self, game):
         self.game = game

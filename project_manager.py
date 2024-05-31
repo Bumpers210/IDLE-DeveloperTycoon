@@ -2,6 +2,7 @@ import threading
 import random
 from tkinter import messagebox
 
+
 class ProjectManager:
     def __init__(self, game):
         self.game = game
@@ -52,8 +53,7 @@ class ProjectManager:
         if self.game.project_in_progress:
             self.game.remaining_project_time -= 1
             self.game.gui.update_project_progress(
-                self.game.current_project.duration, 
-                self.game.remaining_project_time
+                self.game.current_project.duration, self.game.remaining_project_time
             )
             self.assign_exp_to_developers()
             if random.random() < 0.1:  # 10% chance for delay event
@@ -98,7 +98,11 @@ class ProjectManager:
 
     def assign_exp_to_developers(self):
         if self.game.current_project:
-            difficulty = self.game.current_project.programming + self.game.current_project.design + self.game.current_project.marketing
+            difficulty = (
+                self.game.current_project.programming
+                + self.game.current_project.design
+                + self.game.current_project.marketing
+            )
             exp_per_second = (difficulty * 0.5) / 60
             for developer in self.game.developers:
                 developer.gain_exp(exp_per_second)

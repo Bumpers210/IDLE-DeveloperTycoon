@@ -2,7 +2,6 @@ import sqlite3
 from contextlib import contextmanager
 from models import Developer, Project
 
-
 class GameStorage:
     def __init__(self, db_path):
         self.db_path = db_path
