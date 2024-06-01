@@ -1,8 +1,12 @@
 import sqlite3
+import time
 from contextlib import contextmanager
-from models import Developer, Project
+from models import Developer, Project, Research
+
 
 class GameStorage:
+    AUTO_SAVE_INTERVAL = 10
+
     def __init__(self, db_path):
         self.db_path = db_path
         self.initialize_database()
@@ -120,12 +124,14 @@ class GameStorage:
                     ("Health Monitoring System", 180, 4, 3, 4),
                     ("Automated Trading System", 360, 7, 7, 6),
                     ("Smart City Solution", 420, 8, 8, 7),
-                    ("Interactive Storytelling App", 90, 3, 2, 2)
+                    ("Interactive Storytelling App", 90, 3, 2, 2),
                 ]
 
-                cursor.executemany("INSERT INTO projects (name, duration, programming, design, marketing) VALUES (?, ?, ?, ?, ?)", default_projects)
+                cursor.executemany(
+                    "INSERT INTO projects (name, duration, programming, design, marketing) VALUES (?, ?, ?, ?, ?)",
+                    default_projects,
+                )
                 conn.commit()
-
 
     def insert_default_researches_if_empty(self):
         with self.connect() as conn:
@@ -150,17 +156,40 @@ class GameStorage:
         finally:
             conn.close()
 
-    def get_projects(self):
+    def load_projects(self):
         with self.connect() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT name, duration, programming, design, marketing FROM projects")
-            return cursor.fetchall()
+            cursor.execute(
+                "SELECT name, duration, programming, design, marketing FROM projects"
+            )
+            project_data = cursor.fetchall()
+            projects = [
+                Project(
+                    name=proj[0],
+                    duration=proj[1],
+                    programming=proj[2],
+                    design=proj[3],
+                    marketing=proj[4],
+                )
+                for proj in project_data
+            ]
+        return projects
 
-    def get_researches(self):
+    def load_researches(self):
         with self.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT name, cost, duration, effect FROM researches")
-            return cursor.fetchall()
+            research_data = cursor.fetchall()
+            researches = [
+                Research(
+                    name=res[0],
+                    cost=res[1],
+                    duration=res[2],
+                    effect=res[3],
+                )
+                for res in research_data
+            ]
+        return researches
 
     def get_developers(self):
         with self.connect() as conn:
@@ -173,12 +202,16 @@ class GameStorage:
     def get_completed_projects(self):
         with self.connect() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT name, duration, programming, design, marketing FROM completed_projects")
+            cursor.execute(
+                "SELECT name, duration, programming, design, marketing FROM completed_projects"
+            )
             return cursor.fetchall()
 
     def save_game(self, game):
         with self.connect() as conn:
             cursor = conn.cursor()
+
+            print("Saving developers...")
             cursor.execute("DELETE FROM developers")
             developers_data = [
                 (
@@ -195,11 +228,14 @@ class GameStorage:
                 )
                 for dev in game.developers
             ]
+            for dev in developers_data:
+                print(f"Developer: {dev}")
             cursor.executemany(
                 "INSERT INTO developers (name, skill, hunger, thirst, leisure, experience, programming, design, marketing, salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 developers_data,
             )
 
+            print("Saving game state...")
             cursor.execute("DELETE FROM game_state")
             game_state_data = (
                 1,
@@ -209,22 +245,45 @@ class GameStorage:
                 game.remaining_project_time,
                 game.training_cost,
             )
+            print(f"Game State: {game_state_data}")
             cursor.execute(
                 "INSERT INTO game_state (id, balance, income_per_minute, current_project_name, remaining_project_time, training_cost) VALUES (?, ?, ?, ?, ?, ?)",
                 game_state_data,
             )
 
+            print("Saving completed projects...")
             cursor.execute("DELETE FROM completed_projects")
             completed_projects_data = [
-                (proj.name, proj.duration, proj.programming, proj.design, proj.marketing)
+                (
+                    proj.name,
+                    proj.duration,
+                    proj.programming,
+                    proj.design,
+                    proj.marketing,
+                )
                 for proj in game.completed_projects_list
             ]
+            for proj in completed_projects_data:
+                print(f"Completed Project: {proj}")
             cursor.executemany(
                 "INSERT INTO completed_projects (name, duration, programming, design, marketing) VALUES (?, ?, ?, ?, ?)",
                 completed_projects_data,
             )
 
             conn.commit()
+            print("Game saved successfully.")
+
+    def auto_save_game(self, game):
+        while True:
+            time.sleep(self.AUTO_SAVE_INTERVAL)
+            print("Auto-saving game...")
+            self.save_game(game)
+            print("Game auto-saved.")
+
+    def quit_game(self, game, root):
+        print("Quitting game...")
+        self.save_game(game)
+        root.destroy()
 
     def load_game(self, game):
         with self.connect() as conn:
@@ -252,14 +311,22 @@ class GameStorage:
                             game.current_project = project
                             break
 
-            cursor.execute("SELECT name, duration, programming, design, marketing FROM completed_projects")
+            cursor.execute(
+                "SELECT name, duration, programming, design, marketing FROM completed_projects"
+            )
             completed_projects_data = cursor.fetchall()
             game.completed_projects_list = [
-                Project(name=proj[0], duration=proj[1], programming=proj[2], design=proj[3], marketing=proj[4])
+                Project(
+                    name=proj[0],
+                    duration=proj[1],
+                    programming=proj[2],
+                    design=proj[3],
+                    marketing=proj[4],
+                )
                 for proj in completed_projects_data
             ]
             game.completed_projects = len(game.completed_projects_list)
 
     @staticmethod
     def create_tables_if_not_exist():
-        pass  # This method is kept for backward compatibility and is now part of initialize_database()
+        pass

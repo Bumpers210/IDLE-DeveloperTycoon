@@ -6,7 +6,7 @@ class ResearchManager:
         self.game = game
         
     def open_research_selection(self):
-        research_window = tk.Toplevel(self.root)
+        research_window = tk.Toplevel(self.game.gui.root)
         research_window.title("Select Research")
 
         label = tk.Label(research_window, text="Select a research to start:")
@@ -22,7 +22,7 @@ class ResearchManager:
             selected_research_index = listbox.curselection()
             if selected_research_index:
                 selected_research = self.game.researches[selected_research_index[0]]
-                self.game.start_research(selected_research)
+                self.start_research(selected_research)
                 research_window.destroy()
 
         button = tk.Button(

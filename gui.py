@@ -10,15 +10,12 @@ class GameGUI:
         self.create_gui()
 
     def create_gui(self):
-        # Main frame to hold left and right sections
         self.main_frame = tk.Frame(self.root)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Left frame for info, control and project frames
         self.left_frame = tk.Frame(self.main_frame)
         self.left_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-        # Create frames for better organization
         self.info_frame = tk.Frame(
             self.left_frame, bd=2, relief=tk.SUNKEN, padx=10, pady=10
         )
@@ -34,11 +31,9 @@ class GameGUI:
         )
         self.project_frame.pack(fill=tk.X, padx=10, pady=10)
 
-        # Configure grid layout for control_frame to ensure equal button sizes
         for i in range(6):
             self.control_frame.grid_columnconfigure(i, weight=1, uniform="button")
 
-        # Right side: Live Event History
         self.event_history_frame = tk.Frame(
             self.main_frame, bd=2, relief=tk.SUNKEN, padx=10, pady=10
         )
@@ -54,7 +49,6 @@ class GameGUI:
         self.event_history_text = tk.Text(self.event_history_frame, height=20, width=50)
         self.event_history_text.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        # Info Labels
         self.label_balance = tk.Label(
             self.info_frame, text="Balance: $0.00", font=("Arial", 12)
         )
@@ -75,19 +69,16 @@ class GameGUI:
         )
         self.label_training_cost.grid(row=0, column=3, padx=10, pady=5)
 
-        # Developers Skills Label
         self.label_developers_skills = tk.Label(
             self.info_frame, text="", font=("Arial", 10)
         )
         self.label_developers_skills.grid(row=1, columnspan=4, padx=10, pady=5)
 
-        # Project Requirements Label
         self.label_project_requirements = tk.Label(
             self.info_frame, text="", font=("Arial", 10)
         )
         self.label_project_requirements.grid(row=2, columnspan=4, padx=10, pady=5)
 
-        # Project Progress
         self.label_project_duration = tk.Label(
             self.project_frame, text="", font=("Arial", 12)
         )
@@ -108,11 +99,10 @@ class GameGUI:
         )
         self.label_project_update.pack(pady=5)
 
-        # Control Buttons
         self.button_start_project = tk.Button(
             self.control_frame,
             text="Start Project",
-            command=self.game.open_project_selection,
+            command=self.game.project_selector.open_project_selection,
             font=("Arial", 10),
         )
         self.button_start_project.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
@@ -120,7 +110,7 @@ class GameGUI:
         self.button_stop_project = tk.Button(
             self.control_frame,
             text="Stop Project",
-            command=self.game.stop_project,
+            command=self.game.project_manager.stop_project,
             state=tk.DISABLED,
             font=("Arial", 10),
         )
@@ -129,7 +119,7 @@ class GameGUI:
         self.button_resume_project = tk.Button(
             self.control_frame,
             text="Resume Project",
-            command=self.game.resume_project,
+            command=self.game.project_manager.resume_project,
             state=tk.DISABLED,
             font=("Arial", 10),
         )
@@ -138,7 +128,7 @@ class GameGUI:
         self.button_hire_developer = tk.Button(
             self.control_frame,
             text="Hire Developer",
-            command=self.game.open_hire_developer_selection,
+            command=self.game.developer_manager.open_hire_developer_selection,
             font=("Arial", 10),
         )
         self.button_hire_developer.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
@@ -146,7 +136,7 @@ class GameGUI:
         self.button_train = tk.Button(
             self.control_frame,
             text="Train Developer",
-            command=self.game.train_developer,
+            command=self.game.developer_manager.train_developer,
             font=("Arial", 10),
         )
         self.button_train.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
@@ -154,7 +144,7 @@ class GameGUI:
         self.button_start_research = tk.Button(
             self.control_frame,
             text="Start Research",
-            command=self.game.open_research_selection,
+            command=self.game.research_manager.open_research_selection,
             font=("Arial", 10),
         )
         self.button_start_research.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
@@ -162,7 +152,7 @@ class GameGUI:
         self.button_save = tk.Button(
             self.control_frame,
             text="Save Game",
-            command=self.game.save_game,
+            command=lambda: self.game.storage.save_game(self.game),
             font=("Arial", 10),
         )
         self.button_save.grid(row=0, column=4, padx=10, pady=5, sticky="ew")
@@ -170,18 +160,13 @@ class GameGUI:
         self.button_quit = tk.Button(
             self.control_frame,
             text="Quit Game",
-            command=self.quit_game,
+            command=lambda: self.game.storage.quit_game(self.game, self.root),
             font=("Arial", 10),
         )
         self.button_quit.grid(row=0, column=5, padx=10, pady=5, sticky="ew")
 
-        self.root.protocol("WM_DELETE_WINDOW", self.quit_game)
+        self.root.protocol("WM_DELETE_WINDOW", self.game.storage.quit_game)
         self.update_gui()
-
-    def quit_game(self):
-        print("Quitting game...")
-        self.game.save_game()
-        self.root.destroy()
 
     def update_gui(self):
         self.label_balance.config(text=f"Balance: ${self.game.balance:.2f}")

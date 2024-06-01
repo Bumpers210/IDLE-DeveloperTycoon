@@ -46,7 +46,7 @@ class ProjectManager:
             print(f"Resuming project: {self.game.current_project.name}")
             self.game.project_in_progress = True
             self.start_project_timer()
-            self.game.gui.disable_resume_button()
+            self.game.gui.enable_resume_button()
             print(f"Project resumed: {self.game.current_project.name}")
 
     def update_project_time(self):
@@ -56,7 +56,7 @@ class ProjectManager:
                 self.game.current_project.duration, self.game.remaining_project_time
             )
             self.assign_exp_to_developers()
-            if random.random() < 0.1:  # 10% chance for delay event
+            if random.random() < 0.1:
                 self.handle_project_delay()
             if self.game.remaining_project_time <= 0:
                 self.complete_project()
@@ -66,7 +66,7 @@ class ProjectManager:
                 self.game.project_timer.start()
 
     def handle_project_delay(self):
-        delay = random.randint(-10, 10)  # Random delay between -10 to 10 seconds
+        delay = random.randint(-10, 10)
         self.game.remaining_project_time += delay
         print(f"Project delay adjusted by {delay} seconds!")
         self.game.event_manager.update_project_delay(delay)
@@ -80,7 +80,7 @@ class ProjectManager:
             self.game.current_project = None
             self.game.project_in_progress = False
             self.game.remaining_project_time = 0
-            self.game.update_income_per_minute()
+            self.game.income.update_income_per_minute()
             self.game.gui.project_completed()
             self.game.gui.update_gui()
             print("Project completed.")
