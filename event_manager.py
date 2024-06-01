@@ -3,6 +3,7 @@ import time
 import threading
 import tkinter as tk
 
+
 class EventManager:
     def __init__(self, game):
         self.game = game
@@ -12,7 +13,7 @@ class EventManager:
         events = self.get_events()
         self.game.gui.event_history_text.config(state=tk.NORMAL)
         self.game.gui.event_history_text.delete("1.0", tk.END)
-        for event in reversed(events):  # Reverse the order to show the latest events at the top
+        for event in reversed(events):
             self.game.gui.event_history_text.insert("1.0", event + "\n")
         self.game.gui.event_history_text.config(state=tk.DISABLED)
         self.game.gui.root.after(1000, self.update_events)
@@ -22,7 +23,7 @@ class EventManager:
 
     def _random_events_loop(self):
         while True:
-            time.sleep(random.randint(60, 120))  # Random time between 60 and 120 seconds
+            time.sleep(random.randint(60, 120))
             self.trigger_random_event()
 
     def trigger_random_event(self):

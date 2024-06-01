@@ -54,11 +54,12 @@ class Developer:
             self.increase_skill()
 
     def increase_skill(self):
-        # Simple logic to increase the skill with the lowest value
-        skill = {'skill': self.skill}
+        skill = {"skill": self.skill}
         min_skill = min(skill, key=skill.get)
         setattr(self, min_skill, getattr(self, min_skill) + 1)
-        print(f"{self.name}'s {min_skill} skill increased to {getattr(self, min_skill)}")
+        print(
+            f"{self.name}'s {min_skill} skill increased to {getattr(self, min_skill)}"
+        )
 
     @classmethod
     def create_new_developer_start(cls, developers):
@@ -166,7 +167,6 @@ class Developer:
         developers_data = storage.get_developers()
         developers = [Developer(*data) for data in developers_data]
         return developers
-
 
 
 class Project:
